@@ -3,7 +3,21 @@ import torch.nn.functional as F
 
 
 class BuildingBlock(nn.Module):
+    """
+    BuildingBlock
+
+    (Bottleneck) Building block explained in the paper Deep Residual Learning for Image Recognition
+    This building block need to have input and output channels same sized.
+    """
     def __init__(self, extremum_channels, intermediate_channels):
+        """
+        Parameters
+        ----------
+        extremum_channels : int
+            input and ouptut channel size
+        intermediate_channels : int
+            intermediate channel size (usually smaller)
+        """
         super().__init__()
 
         self.conv1 = nn.Conv2d(extremum_channels, intermediate_channels, kernel_size=1)
@@ -32,7 +46,31 @@ class BuildingBlock(nn.Module):
 
 
 class DownSampleBuildingBlock(nn.Module):
+    """
+    DownSampleBuildingBlock
+
+    This Building block handle down sampling and channels size increase.
+    It's the first Building Block of each new stacked block layers.
+
+    """
     def __init__(self, input_channels, output_channels, intermediate_channels, stride):
+        """
+        Parameters
+        ----------
+        input_channels : int
+            input channel size
+        output_channels : int
+            ouptut channel size
+        intermediate_channels : int
+            intermediate channel size
+        stride : int
+            stride of the second convolution layer and of the projection shortcut.
+            When set to 1, the down sampling block don't reduce the size of feature maps (used only
+            for the first building block of the first stacked blocks)
+            When set to 2, the down sampling block reduce the size of feature maps and the input (with
+            a convolution 1x1 with stride 2)
+
+        """
         super().__init__()
 
         self.conv1 = nn.Conv2d(input_channels, intermediate_channels, kernel_size=1)
@@ -64,6 +102,9 @@ class DownSampleBuildingBlock(nn.Module):
 
 
 class resnet50(nn.Module):
+    """
+    resnet50 implementation.
+    """
     def __init__(self, num_channels, num_classes):
         super().__init__()
 
